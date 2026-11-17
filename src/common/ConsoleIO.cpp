@@ -10,10 +10,14 @@ void ConsoleIO::imprimir(const std::string& texto) {
 std::string ConsoleIO::leer() {
     std::string linea;
     if (!std::getline(std::cin, linea)) {
-        return "";
-    }
-    if (!linea.empty() && linea.back() == '\r') {
+        linea.clear();
+    } else if (!linea.empty() && linea.back() == '\r') {
         linea.pop_back();
     }
+    leidas.push_back(linea);
     return linea;
+}
+
+const std::vector<std::string>& ConsoleIO::lineasLeidas() const {
+    return leidas;
 }

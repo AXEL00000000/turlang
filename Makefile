@@ -5,6 +5,7 @@ SRCS     = src/main.cpp \
            src/common/SymbolTable.cpp \
            src/common/Tabla.cpp \
            src/common/ConsoleIO.cpp \
+           src/common/IOSilenciosa.cpp \
            src/frontend/Lexer.cpp \
            src/frontend/Parser.cpp \
            src/frontend/AstPrinter.cpp \
@@ -13,6 +14,7 @@ SRCS     = src/main.cpp \
            src/ir/Triples.cpp \
            src/ir/IrPrinter.cpp \
            src/ir/Costos.cpp \
+           src/ir/Optimizer.cpp \
            src/runtime/Valor.cpp \
            src/runtime/TuringSimulator.cpp \
            src/runtime/Interpreter.cpp

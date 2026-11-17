@@ -1,0 +1,22 @@
+machine Marcar {
+    start q0
+    accept fin
+    state q0 {
+        1 -> 1, R, q0
+        0 -> X, R, q0
+        blank -> blank, S, fin
+    }
+    state q9 {
+        1 -> 1, L, q9
+    }
+}
+
+int a = 3 + 4;
+int b = a * 1;
+int c = b * 2;
+if (a > 10) {
+    print("mayor");
+} else {
+    print("menor");
+}
+print(output Marcar("1001", 50));

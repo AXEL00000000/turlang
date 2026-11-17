@@ -34,6 +34,26 @@ void imprimirBloque(const Bloque& bloque, std::ostream& salida) {
 
 }  // namespace
 
+void imprimirTecnicas(const Optimizer& optimizador, std::ostream& salida) {
+    struct Fila { Tecnica tecnica; const char* nombre; const char* tipo; };
+    const Fila filas[] = {
+        {Tecnica::Folding, "Folding", "Local"},
+        {Tecnica::SimplificacionAlgebraica, "Simplificación algebraica", "Local"},
+        {Tecnica::ReduccionFuerza, "Reducción de fuerza", "Local"},
+        {Tecnica::PropagacionConstantes, "Propagación de constantes", "Global"},
+        {Tecnica::CodigoMuerto, "Eliminación de código muerto", "Global"},
+        {Tecnica::DesenrolladoCiclos, "Desenrollado de ciclos", "Global"},
+        {Tecnica::EstadosInalcanzables, "Eliminación de estados inalcanzables", "Global"},
+        {Tecnica::EscriturasRedundantes, "Eliminación de escrituras redundantes", "Mirilla"},
+        {Tecnica::SaltosInnecesarios, "Eliminación de saltos innecesarios", "Mirilla"},
+    };
+    std::vector<std::vector<std::string>> tabla = {{"Técnica", "Tipo", "Veces"}};
+    for (const Fila& f : filas) {
+        tabla.push_back({f.nombre, f.tipo, std::to_string(optimizador.veces(f.tecnica))});
+    }
+    imprimirTabla(tabla, salida);
+}
+
 void imprimirCodigoIntermedio(const Program& programa, std::ostream& salida) {
     for (const Bloque& maquina : programa.maquinas) {
         imprimirBloque(maquina, salida);

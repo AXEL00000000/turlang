@@ -112,12 +112,14 @@ void Memoria::guardar(const std::string& nombre, const Valor& valor) {
 bool Memoria::valorDe(const Operando& o, Valor& valor, std::string& error) const {
     switch (o.clase) {
         case ClaseOperando::Entero: {
+            // El optimizador puede dejar un entero negativo al plegar constantes.
+            bool negativo = !o.texto.empty() && o.texto[0] == '-';
             int64_t n = 0;
-            if (!leerDigitos(o.texto, 0, MAX_32, n)) {
+            if (!leerDigitos(o.texto, negativo ? 1 : 0, negativo ? -MIN_32 : MAX_32, n)) {
                 error = "número fuera de rango: " + o.texto;
                 return false;
             }
-            valor = valorEntero(static_cast<int32_t>(n));
+            valor = valorEntero(recortar32(negativo ? -n : n));
             return true;
         }
         case ClaseOperando::Cadena:

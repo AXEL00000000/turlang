@@ -11,6 +11,7 @@
 
 #include "common/ConsoleIO.h"
 #include "common/ErrorHandler.h"
+#include "common/IOSilenciosa.h"
 #include "common/SymbolTable.h"
 #include "common/Token.h"
 #include "frontend/AstPrinter.h"
@@ -20,6 +21,7 @@
 #include "ir/IntermediateCodeGenerator.h"
 #include "ir/Costos.h"
 #include "ir/IrPrinter.h"
+#include "ir/Optimizer.h"
 #include "runtime/Interpreter.h"
 #include "runtime/Program.h"
 
@@ -153,8 +155,16 @@ int main(int argc, char* argv[]) {
     IntermediateCodeGenerator generador(programa);
     Program codigo = generador.generar();
 
+    Optimizer optimizador;
+    Program optimizado = optimizador.optimizar(codigo);
+
     if (bandera == "--cuadruplos") {
+        std::cout << "=== Antes de optimizar ===\n\n";
         imprimirCodigoIntermedio(codigo, std::cout);
+        std::cout << "\n=== Técnicas aplicadas ===\n\n";
+        imprimirTecnicas(optimizador, std::cout);
+        std::cout << "\n=== Después de optimizar ===\n\n";
+        imprimirCodigoIntermedio(optimizado, std::cout);
         return 0;
     }
     if (bandera == "--asm" || bandera == "--esp32") {
@@ -162,9 +172,9 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    // Sin bandera o con --costos: ejecutar en consola.
+    // Sin bandera o con --costos: se ejecuta el programa optimizado en consola.
     ConsoleIO io;
-    Interpreter interprete(codigo, io);
+    Interpreter interprete(optimizado, io);
     if (!interprete.ejecutar()) {
         std::cout << errores.nombreArchivo() << ':' << interprete.lineaError()
                   << ": error de ejecución: " << interprete.mensajeError() << '\n';
@@ -172,7 +182,12 @@ int main(int argc, char* argv[]) {
     }
 
     if (bandera == "--costos") {
-        imprimirCostos(codigo, interprete.estadisticas(), std::cout);
+        // El original se ejecuta en silencio con las mismas líneas de entrada.
+        IOSilenciosa silenciosa(io.lineasLeidas());
+        Interpreter original(codigo, silenciosa);
+        original.ejecutar();
+        imprimirCostos(codigo, original.estadisticas(), optimizado, interprete.estadisticas(),
+                       std::cout);
     }
     return 0;
 }
