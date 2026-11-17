@@ -1,13 +1,17 @@
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <iterator>
 #include <string>
+#include <vector>
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
 #include "common/ErrorHandler.h"
+#include "common/Token.h"
+#include "frontend/Lexer.h"
 
 namespace {
 
@@ -39,6 +43,21 @@ bool leerArchivo(const std::string& ruta, std::string& contenido) {
         contenido.erase(0, 3);
     }
     return true;
+}
+
+// Tabla de tokens para --tokens, con una línea final con el total.
+void imprimirTokens(const std::vector<Token>& tokens, std::ostream& salida) {
+    salida << "Línea  Col  Tipo         Lexema\n";
+    for (const Token& t : tokens) {
+        salida << std::right << std::setw(5) << t.linea
+               << std::setw(5) << t.columna << "  ";
+        if (t.lexema.empty()) {
+            salida << nombreTipo(t.tipo) << '\n';
+        } else {
+            salida << std::left << std::setw(13) << nombreTipo(t.tipo) << t.lexema << '\n';
+        }
+    }
+    salida << tokens.size() << " tokens\n";
 }
 
 }  // namespace
@@ -75,16 +94,20 @@ int main(int argc, char* argv[]) {
 
     ErrorHandler errores(ruta);
 
+    Lexer lexer(fuente, errores);
+    std::vector<Token> tokens = lexer.analizar();
+
     if (bandera == "--tokens") {
-        // Se implementa en la etapa 1.
-    } else if (!bandera.empty()) {
-        std::cout << bandera << ": pendiente\n";
-        return 0;
+        imprimirTokens(tokens, std::cout);
     }
 
     if (errores.hayErrores()) {
         errores.imprimir(std::cout);
         return 1;
+    }
+
+    if (bandera != "" && bandera != "--tokens") {
+        std::cout << bandera << ": pendiente\n";
     }
     return 0;
 }

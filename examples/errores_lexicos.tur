@@ -1,0 +1,4 @@
+int n = 5 @ 2;
+string s = "hola;
+bool b = n ! 3;
+int x_1 = 4;

@@ -1,7 +1,8 @@
 CXX      = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -Isrc
 SRCS     = src/main.cpp \
-           src/common/ErrorHandler.cpp
+           src/common/ErrorHandler.cpp \
+           src/frontend/Lexer.cpp
 
 ifeq ($(OS),Windows_NT)
   CXXFLAGS += -static
