@@ -9,6 +9,7 @@
 #include <windows.h>
 #endif
 
+#include "backend/CodeGenerator.h"
 #include "common/ConsoleIO.h"
 #include "common/ErrorHandler.h"
 #include "common/IOSilenciosa.h"
@@ -167,7 +168,25 @@ int main(int argc, char* argv[]) {
         imprimirCodigoIntermedio(optimizado, std::cout);
         return 0;
     }
-    if (bandera == "--asm" || bandera == "--esp32") {
+    if (bandera == "--asm") {
+        // <mismo nombre y carpeta que el .tur>.asm, a partir del programa optimizado.
+        std::string rutaAsm = ruta.substr(0, ruta.size() - 4) + ".asm";
+        std::ofstream archivoAsm(rutaAsm, std::ios::binary);
+        if (!archivoAsm) {
+            std::cerr << "turlang: no se pudo escribir " << rutaAsm << '\n';
+            return 2;
+        }
+        CodeGenerator generadorAsm(optimizado, tabla, errores.nombreArchivo());
+        generadorAsm.generar(archivoAsm);
+        archivoAsm.close();
+        if (!archivoAsm) {
+            std::cerr << "turlang: no se pudo escribir " << rutaAsm << '\n';
+            return 2;
+        }
+        std::cout << "generado: " << rutaAsm << '\n';
+        return 0;
+    }
+    if (bandera == "--esp32") {
         std::cout << bandera << ": pendiente\n";
         return 0;
     }

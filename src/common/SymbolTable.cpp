@@ -1,5 +1,7 @@
 #include "common/SymbolTable.h"
 
+#include <algorithm>
+
 #include "common/Tabla.h"
 
 namespace {
@@ -54,6 +56,17 @@ int SymbolTable::reservar(TipoDato tipo) {
     int direccion = siguienteDireccion;
     siguienteDireccion += tamano(tipo);
     return direccion;
+}
+
+std::vector<Simbolo> SymbolTable::variablesPorDireccion() const {
+    std::vector<Simbolo> variables;
+    for (const std::string& clave : orden) {
+        const Simbolo& s = simbolos.find(clave)->second;
+        if (s.direccion >= 0) variables.push_back(s);
+    }
+    std::stable_sort(variables.begin(), variables.end(),
+                     [](const Simbolo& a, const Simbolo& b) { return a.direccion < b.direccion; });
+    return variables;
 }
 
 void SymbolTable::imprimir(std::ostream& salida) const {

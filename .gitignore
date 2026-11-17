@@ -3,5 +3,7 @@ turlang.exe
 *.o
 *.turc
 *.asm
+*.obj
+*.exe
 .vscode/*
 !.vscode/tasks.json

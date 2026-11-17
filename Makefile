@@ -17,7 +17,8 @@ SRCS     = src/main.cpp \
            src/ir/Optimizer.cpp \
            src/runtime/Valor.cpp \
            src/runtime/TuringSimulator.cpp \
-           src/runtime/Interpreter.cpp
+           src/runtime/Interpreter.cpp \
+           src/backend/CodeGenerator.cpp
 
 ifeq ($(OS),Windows_NT)
   CXXFLAGS += -static

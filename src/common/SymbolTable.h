@@ -24,6 +24,7 @@ public:
     const Simbolo* buscar(const std::string& clave) const;  // nullptr si no existe
     int reservar(TipoDato tipo);                            // regresa la dirección y avanza
     void imprimir(std::ostream& salida) const;
+    std::vector<Simbolo> variablesPorDireccion() const;    // las que ocupan memoria, por dirección
 private:
     std::unordered_map<std::string, Simbolo> simbolos;
     std::vector<std::string> orden;   // claves en orden de inserción
