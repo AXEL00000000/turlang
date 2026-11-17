@@ -16,6 +16,9 @@
 #include "frontend/Lexer.h"
 #include "frontend/Parser.h"
 #include "frontend/SemanticAnalyzer.h"
+#include "ir/IntermediateCodeGenerator.h"
+#include "ir/IrPrinter.h"
+#include "runtime/Program.h"
 
 namespace {
 
@@ -140,6 +143,14 @@ int main(int argc, char* argv[]) {
 
     if (bandera == "--tabla") {
         tabla.imprimir(std::cout);
+        return 0;
+    }
+
+    IntermediateCodeGenerator generador(programa);
+    Program codigo = generador.generar();
+
+    if (bandera == "--cuadruplos") {
+        imprimirCodigoIntermedio(codigo, std::cout);
     } else if (!bandera.empty()) {
         std::cout << bandera << ": pendiente\n";
     }

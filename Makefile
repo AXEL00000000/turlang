@@ -6,7 +6,10 @@ SRCS     = src/main.cpp \
            src/frontend/Lexer.cpp \
            src/frontend/Parser.cpp \
            src/frontend/AstPrinter.cpp \
-           src/frontend/SemanticAnalyzer.cpp
+           src/frontend/SemanticAnalyzer.cpp \
+           src/ir/IntermediateCodeGenerator.cpp \
+           src/ir/Triples.cpp \
+           src/ir/IrPrinter.cpp
 
 ifeq ($(OS),Windows_NT)
   CXXFLAGS += -static
