@@ -11,12 +11,14 @@
 
 #include "common/ErrorHandler.h"
 #include "common/Token.h"
+#include "frontend/AstPrinter.h"
 #include "frontend/Lexer.h"
+#include "frontend/Parser.h"
 
 namespace {
 
 const char* const LINEA_USO =
-    "uso: turlang <archivo.tur> [--tokens | --tabla | --cuadruplos | --asm | --esp32]";
+    "uso: turlang <archivo.tur> [--tokens | --arbol | --tabla | --cuadruplos | --asm | --esp32]";
 
 bool terminaEn(const std::string& texto, const std::string& sufijo) {
     return texto.size() >= sufijo.size() &&
@@ -24,8 +26,8 @@ bool terminaEn(const std::string& texto, const std::string& sufijo) {
 }
 
 bool esBanderaConocida(const std::string& bandera) {
-    return bandera == "--tokens" || bandera == "--tabla" || bandera == "--cuadruplos" ||
-           bandera == "--asm" || bandera == "--esp32";
+    return bandera == "--tokens" || bandera == "--arbol" || bandera == "--tabla" ||
+           bandera == "--cuadruplos" || bandera == "--asm" || bandera == "--esp32";
 }
 
 // Lee el archivo completo en modo binario y quita la marca BOM de UTF-8.
@@ -101,12 +103,27 @@ int main(int argc, char* argv[]) {
         imprimirTokens(tokens, std::cout);
     }
 
+    // Con errores léxicos no se ejecuta el Parser.
     if (errores.hayErrores()) {
         errores.imprimir(std::cout);
         return 1;
     }
 
-    if (bandera != "" && bandera != "--tokens") {
+    if (bandera == "--tokens") {
+        return 0;
+    }
+
+    Parser parser(tokens, errores);
+    Programa programa = parser.analizar();
+
+    if (errores.hayErrores()) {
+        errores.imprimir(std::cout);
+        return 1;
+    }
+
+    if (bandera == "--arbol") {
+        imprimirArbol(programa, std::cout);
+    } else if (!bandera.empty()) {
         std::cout << bandera << ": pendiente\n";
     }
     return 0;

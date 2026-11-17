@@ -1,0 +1,5 @@
+int n = 1;
+bool ok = false;
+int total = n * 2 + 1;
+while (n <= 3) { n = n + 1; }
+if (total >= 10) { ok = true; } else { ok = false; }

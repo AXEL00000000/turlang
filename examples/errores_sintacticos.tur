@@ -1,0 +1,15 @@
+machine M {
+    start q0
+    accept fin
+    state q0 {
+        0 -> X, D, q1
+        R -> L, R, q0
+        ab -> 1, R, q0
+    }
+}
+
+int n = 1;
+n + 1;
+while (n <= 3) n = n + 1;
+print(n;
+int = 5;
