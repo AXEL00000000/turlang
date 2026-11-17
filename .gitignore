@@ -1,0 +1,7 @@
+turlang
+turlang.exe
+*.o
+*.turc
+*.asm
+.vscode/*
+!.vscode/tasks.json

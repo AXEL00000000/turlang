@@ -1,0 +1,12 @@
+CXX      = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra -Isrc
+SRCS     = src/main.cpp \
+           src/common/ErrorHandler.cpp
+
+ifeq ($(OS),Windows_NT)
+  CXXFLAGS += -static
+endif
+
+.PHONY: turlang
+turlang:
+	$(CXX) $(CXXFLAGS) $(SRCS) -o turlang

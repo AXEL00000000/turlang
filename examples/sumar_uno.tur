@@ -1,0 +1,16 @@
+// SumarUno: suma uno a un numero en unario
+machine SumarUno {
+    start q0
+    accept fin
+    state q0 {
+        1 -> 1, R, q0
+        blank -> 1, S, fin
+    }
+}
+
+string entrada = "11";
+if (run SumarUno(entrada, 100)) {
+    print("aceptada");
+} else {
+    print("rechazada");
+}
