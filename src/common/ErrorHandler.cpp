@@ -36,6 +36,10 @@ bool ErrorHandler::hayErrores() const {
     return !errores.empty();
 }
 
+const std::string& ErrorHandler::nombreArchivo() const {
+    return archivo;
+}
+
 int ErrorHandler::total() const {
     return static_cast<int>(errores.size());
 }

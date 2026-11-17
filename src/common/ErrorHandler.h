@@ -20,6 +20,7 @@ public:
     bool hayErrores() const;
     int total() const;
     void imprimir(std::ostream& salida) const;
+    const std::string& nombreArchivo() const;   // sin la ruta
 private:
     std::string archivo;
     std::vector<Error> errores;

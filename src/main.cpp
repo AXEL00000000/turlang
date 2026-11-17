@@ -9,6 +9,7 @@
 #include <windows.h>
 #endif
 
+#include "common/ConsoleIO.h"
 #include "common/ErrorHandler.h"
 #include "common/SymbolTable.h"
 #include "common/Token.h"
@@ -17,13 +18,15 @@
 #include "frontend/Parser.h"
 #include "frontend/SemanticAnalyzer.h"
 #include "ir/IntermediateCodeGenerator.h"
+#include "ir/Costos.h"
 #include "ir/IrPrinter.h"
+#include "runtime/Interpreter.h"
 #include "runtime/Program.h"
 
 namespace {
 
 const char* const LINEA_USO =
-    "uso: turlang <archivo.tur> [--tokens | --arbol | --tabla | --cuadruplos | --asm | --esp32]";
+    "uso: turlang <archivo.tur> [--tokens | --arbol | --tabla | --cuadruplos | --costos | --asm | --esp32]";
 
 bool terminaEn(const std::string& texto, const std::string& sufijo) {
     return texto.size() >= sufijo.size() &&
@@ -32,7 +35,8 @@ bool terminaEn(const std::string& texto, const std::string& sufijo) {
 
 bool esBanderaConocida(const std::string& bandera) {
     return bandera == "--tokens" || bandera == "--arbol" || bandera == "--tabla" ||
-           bandera == "--cuadruplos" || bandera == "--asm" || bandera == "--esp32";
+           bandera == "--cuadruplos" || bandera == "--costos" || bandera == "--asm" ||
+           bandera == "--esp32";
 }
 
 // Lee el archivo completo en modo binario y quita la marca BOM de UTF-8.
@@ -151,8 +155,24 @@ int main(int argc, char* argv[]) {
 
     if (bandera == "--cuadruplos") {
         imprimirCodigoIntermedio(codigo, std::cout);
-    } else if (!bandera.empty()) {
+        return 0;
+    }
+    if (bandera == "--asm" || bandera == "--esp32") {
         std::cout << bandera << ": pendiente\n";
+        return 0;
+    }
+
+    // Sin bandera o con --costos: ejecutar en consola.
+    ConsoleIO io;
+    Interpreter interprete(codigo, io);
+    if (!interprete.ejecutar()) {
+        std::cout << errores.nombreArchivo() << ':' << interprete.lineaError()
+                  << ": error de ejecución: " << interprete.mensajeError() << '\n';
+        return 1;
+    }
+
+    if (bandera == "--costos") {
+        imprimirCostos(codigo, interprete.estadisticas(), std::cout);
     }
     return 0;
 }

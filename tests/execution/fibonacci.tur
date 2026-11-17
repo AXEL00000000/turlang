@@ -1,0 +1,11 @@
+int a = 0;
+int b = 1;
+int t = 0;
+int i = 0;
+while (i < 10) {
+    print(a);
+    t = a + b;
+    a = b;
+    b = t;
+    i = i + 1;
+}

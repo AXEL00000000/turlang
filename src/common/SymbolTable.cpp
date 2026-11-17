@@ -1,23 +1,10 @@
 #include "common/SymbolTable.h"
 
-#include <algorithm>
-#include <array>
+#include "common/Tabla.h"
 
 namespace {
 
-const int NUM_COLUMNAS = 7;
-using Fila = std::array<std::string, NUM_COLUMNAS>;
-
-// Cuenta caracteres UTF-8, no bytes: los bytes de continuación no cuentan.
-size_t anchoTexto(const std::string& texto) {
-    size_t ancho = 0;
-    for (unsigned char c : texto) {
-        if ((c & 0xC0) != 0x80) {
-            ++ancho;
-        }
-    }
-    return ancho;
-}
+using Fila = std::vector<std::string>;
 
 int tamano(TipoDato tipo) {
     switch (tipo) {
@@ -96,24 +83,5 @@ void SymbolTable::imprimir(std::ostream& salida) const {
         if (s.funcion) agregar(s);
     }
 
-    std::array<size_t, NUM_COLUMNAS> anchos{};
-    for (const Fila& fila : filas) {
-        for (int i = 0; i < NUM_COLUMNAS; ++i) {
-            anchos[i] = std::max(anchos[i], anchoTexto(fila[i]));
-        }
-    }
-
-    for (const Fila& fila : filas) {
-        std::string linea;
-        for (int i = 0; i < NUM_COLUMNAS; ++i) {
-            linea += fila[i];
-            if (i + 1 < NUM_COLUMNAS) {
-                linea += std::string(anchos[i] + 2 - anchoTexto(fila[i]), ' ');
-            }
-        }
-        // Sin espacios sobrantes al final.
-        size_t fin = linea.find_last_not_of(' ');
-        linea.erase(fin == std::string::npos ? 0 : fin + 1);
-        salida << linea << '\n';
-    }
+    imprimirTabla(filas, salida);
 }
