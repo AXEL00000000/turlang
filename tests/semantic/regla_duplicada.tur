@@ -1,0 +1,11 @@
+// Dos reglas para el mismo simbolo
+machine Ejemplo {
+    start q0
+    accept fin
+    state q0 {
+        1 -> 1, R, q0
+        1 -> X, L, fin
+    }
+}
+
+print("listo");

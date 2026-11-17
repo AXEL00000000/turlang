@@ -10,10 +10,12 @@
 #endif
 
 #include "common/ErrorHandler.h"
+#include "common/SymbolTable.h"
 #include "common/Token.h"
 #include "frontend/AstPrinter.h"
 #include "frontend/Lexer.h"
 #include "frontend/Parser.h"
+#include "frontend/SemanticAnalyzer.h"
 
 namespace {
 
@@ -121,8 +123,23 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // --arbol muestra el árbol sin análisis semántico.
     if (bandera == "--arbol") {
         imprimirArbol(programa, std::cout);
+        return 0;
+    }
+
+    SymbolTable tabla;
+    SemanticAnalyzer semantico(programa, tabla, errores);
+    semantico.analizar();
+
+    if (errores.hayErrores()) {
+        errores.imprimir(std::cout);
+        return 1;
+    }
+
+    if (bandera == "--tabla") {
+        tabla.imprimir(std::cout);
     } else if (!bandera.empty()) {
         std::cout << bandera << ": pendiente\n";
     }

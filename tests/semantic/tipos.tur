@@ -1,0 +1,12 @@
+int n = "hola";
+bool ok = false;
+ok = 5;
+if (n) { n = 1; }
+bool c = true + false;
+int p = "11" * 2;
+int q = int(true);
+string s = string("a");
+bool b = input();
+int r = input();
+string t = "n = " + 5;
+while ("11" < 3) { n = 2; }

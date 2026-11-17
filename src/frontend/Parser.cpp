@@ -92,9 +92,13 @@ std::string Parser::describir(const Token& token) const {
 
 // ------------------------------------------------------ recuperación de errores
 
-// Encabezado de una máquina o de un estado: avanza hasta State, Machine o Fin.
+// Encabezado de una máquina o de un estado: avanza hasta State, Machine o Fin, o
+// hasta una palabra que inicia la sección de control (int, string, bool, if,
+// while, print), que nunca es válida dentro de una máquina.
 void Parser::sincronizarEncabezado(size_t inicio) {
-    while (!es(TipoToken::State) && !es(TipoToken::Machine) && !es(TipoToken::Fin)) {
+    while (!es(TipoToken::State) && !es(TipoToken::Machine) && !es(TipoToken::Fin) &&
+           !es(TipoToken::Int) && !es(TipoToken::String) && !es(TipoToken::Bool) &&
+           !es(TipoToken::If) && !es(TipoToken::While) && !es(TipoToken::Print)) {
         avanzar();
     }
     if (pos == inicio) {

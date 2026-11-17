@@ -1,0 +1,13 @@
+machine SumarUno {
+    start q0
+    accept fin
+    state q0 {
+        1 -> 1, R, q0
+        blank -> 1, S, fin
+    }
+}
+
+int n = 1;
+int total = n * 2 + 1;
+bool ok = false;
+string entrada = "11";

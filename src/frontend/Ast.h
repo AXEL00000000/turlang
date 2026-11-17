@@ -18,6 +18,7 @@ struct Expr {
     std::string texto;
     std::vector<std::unique_ptr<Expr>> hijos;
     TipoDato tipo = TipoDato::Desconocido;   // lo llena el análisis semántico (etapa 3)
+    bool implicita = false;   // conversión que agregó el traductor, no el programa
 };
 
 enum class ClaseStmt { Decl, Asignacion, If, While, Print };

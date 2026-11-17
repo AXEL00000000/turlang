@@ -1,0 +1,20 @@
+machine SumarUno {
+    start q0
+    accept fin
+    state q0 {
+        1 -> 1, R, q0
+        blank -> 1, S, fin
+    }
+}
+
+machine SumarUno {
+    start a
+    accept b
+    state a {
+        1 -> 1, R, b
+    }
+}
+
+bool ok = run Otra("11", 100);
+string s = output SumarUno(5, 100);
+string r = repeat(3, "1");

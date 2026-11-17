@@ -1,0 +1,16 @@
+machine M {
+    start q9
+    accept fin
+    state q0 {
+        1 -> 1, R, q5
+        0 -> 0, R, fin
+    }
+    state q0 {
+        1 -> 1, R, q0
+    }
+    state fin {
+        1 -> 1, S, fin
+    }
+}
+
+print("listo");
