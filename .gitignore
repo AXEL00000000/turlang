@@ -7,3 +7,4 @@ turlang.exe
 *.exe
 .vscode/*
 !.vscode/tasks.json
+docs/
