@@ -36,7 +36,40 @@ $ ./turlang examples/sumar_uno.tur
 aceptada
 ```
 
-## 2. Requisitos
+## 2. Instalación en Windows
+
+Para usar TurLang sin compilarlo:
+
+1. Descarga `turlang-windows.zip` de la página de releases del repositorio (o genéralo
+   con `mingw32-make paquete`, que lo deja en `dist/`).
+2. Extrae el zip en cualquier carpeta.
+3. Haz doble clic en `instalar.bat`. Copia `turlang.exe` a
+   `%LOCALAPPDATA%\Programs\TurLang` y agrega esa carpeta al PATH del usuario, sin
+   duplicarla. No necesita permisos de administrador ni toca el PATH del sistema. Si
+   TurLang ya estaba instalado, lo reemplaza.
+4. Abre una terminal nueva (las que ya estaban abiertas no ven el cambio) y prueba
+   desde la carpeta donde extrajiste el zip:
+
+```
+turlang ejemplos\factorial.tur
+```
+
+```
+factorial de 5 = 120
+```
+
+Desde ese momento `turlang` funciona en cualquier carpeta. Para desinstalarlo, haz
+doble clic en `desinstalar.bat`: borra la carpeta y la quita del PATH del usuario.
+
+| Archivo del zip | Contenido |
+|---|---|
+| `turlang.exe` | El traductor. |
+| `instalar.bat`, `instalar.ps1` | Instalación para el usuario actual. |
+| `desinstalar.bat`, `desinstalar.ps1` | Desinstalación. |
+| `README.md` | Este manual. |
+| `ejemplos/` | `sumar_uno.tur`, `factorial.tur`, `fibonacci.tur`, `binario.tur` y `ceros_unos.tur`. |
+
+## 3. Requisitos
 
 | Para | Herramienta |
 |---|---|
@@ -45,7 +78,7 @@ aceptada
 | Correr las pruebas | PowerShell (incluido en Windows; `pwsh` en Linux o macOS). |
 | Cargar el prototipo | Arduino IDE 2 (firmware del ESP32, pendiente). |
 
-## 3. Compilar el traductor
+## 4. Compilar el traductor
 
 ```
 mingw32-make          (Windows)
@@ -57,7 +90,7 @@ En VS Code, la tarea de compilación del repositorio (`.vscode/tasks.json`, Ctrl
 ejecuta el mismo comando. Los ejemplos de este manual se escriben como `./turlang`,
 que funciona en PowerShell y en Git Bash; en `cmd` usa `.\turlang`.
 
-## 4. Uso
+## 5. Uso
 
 ```
 turlang <archivo.tur> [--tokens | --arbol | --tabla | --cuadruplos | --costos | --asm | --esp32]
@@ -114,7 +147,7 @@ Códigos de salida:
 | 1 | El programa tiene errores (léxicos, sintácticos o semánticos) o falló al ejecutarse. |
 | 2 | Error de uso: argumentos, extensión, archivo que no se puede abrir o escribir, `.turc` dañado. |
 
-## 5. El lenguaje
+## 6. El lenguaje
 
 Un programa tiene cero o más máquinas y después la sección de control (al menos una
 sentencia). `//` inicia un comentario hasta el final de la línea.
@@ -146,7 +179,7 @@ sentencia). `//` inicia un comentario hasta el final de la línea.
 Límites al ejecutar: las cadenas y la cinta tienen a lo más 2000 caracteres; la cinta
 es infinita en los dos sentidos dentro de ese límite.
 
-## 6. Mensajes de error
+## 7. Mensajes de error
 
 Los errores del programa tienen el formato
 
@@ -177,7 +210,7 @@ n:
 lectura.tur:2: error de ejecución: conversión inválida: "hola" no es un número
 ```
 
-## 7. Ensamblar y ejecutar el `.asm`
+## 8. Ensamblar y ejecutar el `.asm`
 
 `--asm` genera ensamblador NASM para x86 de 32 bits a partir del código optimizado.
 Para obtener un ejecutable en Windows:
@@ -204,7 +237,7 @@ el ensamblador sea NASM y el modo x86 (32 bits); después constrúyelo y ejecút
 desde el menú de SASM. El archivo usa la macro `C()` para los nombres de la
 biblioteca de C, de modo que también se puede ensamblar en Linux con `nasm -f elf32`.
 
-## 8. Llevar un programa al prototipo
+## 9. Llevar un programa al prototipo
 
 1. Genera el compilado: `turlang programa.tur --esp32` (crea `programa.turc` en la
    misma carpeta; lleva el código fuente, las variables y los cuádruplos sin
@@ -214,7 +247,7 @@ biblioteca de C, de modo que también se puede ensamblar en Linux con `nasm -f e
 4. Inserta la SD en el prototipo y elige el programa en el menú. *Pendiente: depende
    del firmware del ESP32.*
 
-## 9. Pruebas
+## 10. Pruebas
 
 ```
 mingw32-make test     (Windows)
@@ -238,7 +271,7 @@ entrada (`.entrada`), su código de salida (`.codigo`) y su código intermedio
 En `tests/execution` y `tests/intermediate` cada programa se ejecuta también desde su
 `.turc`, para comprobar que el código sin optimizar da la misma salida.
 
-## 10. Estructura del repositorio
+## 11. Estructura del repositorio
 
 ```
 src/main.cpp        línea de comandos
@@ -247,7 +280,9 @@ src/frontend/       Lexer, árbol sintáctico, Parser y análisis semántico
 src/ir/             código intermedio, tripletas, optimizador, costos e impresión
 src/backend/        generador de ensamblador x86
 src/runtime/        cuádruplos, intérprete, simulador de máquinas y .turc (también para el ESP32)
-scripts/            ensamblar.bat (NASM + gcc de 32 bits) y probar.ps1 (pruebas)
+scripts/            ensamblar.bat (NASM + gcc de 32 bits), probar.ps1 (pruebas),
+                    instalar y desinstalar (.bat y .ps1) y paquete.ps1 (arma el zip)
+dist/               turlang-windows.zip, generado con mingw32-make paquete (no se sube)
 tests/              pruebas automáticas por fase
 examples/           programas .tur de ejemplo
 docs/               hojas de instrucciones por etapa

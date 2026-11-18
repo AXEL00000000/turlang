@@ -8,3 +8,4 @@ turlang.exe
 .vscode/*
 !.vscode/tasks.json
 docs/
+dist/

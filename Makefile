@@ -28,9 +28,12 @@ else
   POWERSHELL = pwsh
 endif
 
-.PHONY: turlang test
+.PHONY: turlang test paquete
 turlang:
 	$(CXX) $(CXXFLAGS) $(SRCS) -o turlang
 
 test: turlang
 	$(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/probar.ps1
+
+paquete: turlang
+	$(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/paquete.ps1
