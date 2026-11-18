@@ -1,0 +1,5 @@
+errores_lexicos.tur:1:11: error léxico: carácter no reconocido '@'
+errores_lexicos.tur:2:12: error léxico: cadena sin cerrar
+errores_lexicos.tur:3:12: error léxico: carácter no reconocido '!'
+errores_lexicos.tur:4:6: error léxico: carácter no reconocido '_'
+4 errores encontrados; no se generó código.

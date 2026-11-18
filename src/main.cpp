@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <iostream>
 #include <iterator>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -25,6 +26,7 @@
 #include "ir/Optimizer.h"
 #include "runtime/Interpreter.h"
 #include "runtime/Program.h"
+#include "runtime/Turc.h"
 
 namespace {
 
@@ -57,6 +59,54 @@ bool leerArchivo(const std::string& ruta, std::string& contenido) {
         contenido.erase(0, 3);
     }
     return true;
+}
+
+// Escribe el archivo completo en modo binario (finales de línea \n).
+bool escribirArchivo(const std::string& ruta, const std::string& contenido) {
+    std::ofstream salida(ruta, std::ios::binary);
+    if (!salida) {
+        return false;
+    }
+    salida << contenido;
+    salida.close();
+    return static_cast<bool>(salida);
+}
+
+// Líneas del programa fuente, sin los saltos ni un '\r' final.
+std::vector<std::string> lineasDe(const std::string& texto) {
+    std::vector<std::string> lineas;
+    size_t inicio = 0;
+    while (inicio < texto.size()) {
+        size_t fin = texto.find('\n', inicio);
+        if (fin == std::string::npos) fin = texto.size();
+        std::string linea = texto.substr(inicio, fin - inicio);
+        if (!linea.empty() && linea.back() == '\r') linea.pop_back();
+        lineas.push_back(linea);
+        inicio = fin + 1;
+    }
+    return lineas;
+}
+
+void imprimirErrorEjecucion(const std::string& archivo, const Interpreter& interprete) {
+    std::cout << archivo << ':' << interprete.lineaError()
+              << ": error de ejecución: " << interprete.mensajeError() << '\n';
+}
+
+// turlang programa.turc: carga el compilado y lo ejecuta en consola.
+int ejecutarTurc(const std::string& texto) {
+    Compilado compilado;
+    std::string error;
+    if (!leerTurc(texto, compilado, error)) {
+        std::cerr << "turlang: " << error << '\n';
+        return 2;
+    }
+    ConsoleIO io;
+    Interpreter interprete(compilado.programa, io);
+    if (!interprete.ejecutar()) {
+        imprimirErrorEjecucion(compilado.nombre, interprete);
+        return 1;
+    }
+    return 0;
 }
 
 // Tabla de tokens para --tokens, con una línea final con el total.
@@ -95,8 +145,13 @@ int main(int argc, char* argv[]) {
         return 2;
     }
 
-    if (!terminaEn(ruta, ".tur")) {
-        std::cerr << "turlang: el archivo debe tener extensión .tur\n";
+    bool esTurc = terminaEn(ruta, ".turc");
+    if (!esTurc && !terminaEn(ruta, ".tur")) {
+        std::cerr << "turlang: el archivo debe tener extensión .tur o .turc\n";
+        return 2;
+    }
+    if (esTurc && !bandera.empty()) {
+        std::cerr << "turlang: un archivo .turc solo se puede ejecutar\n";
         return 2;
     }
 
@@ -104,6 +159,10 @@ int main(int argc, char* argv[]) {
     if (!leerArchivo(ruta, fuente)) {
         std::cerr << "turlang: no se pudo abrir " << ruta << '\n';
         return 2;
+    }
+
+    if (esTurc) {
+        return ejecutarTurc(fuente);
     }
 
     ErrorHandler errores(ruta);
@@ -156,6 +215,24 @@ int main(int argc, char* argv[]) {
     IntermediateCodeGenerator generador(programa);
     Program codigo = generador.generar();
 
+    if (bandera == "--esp32") {
+        // El compilado lleva los cuádruplos sin optimizar.
+        Compilado compilado;
+        compilado.nombre = errores.nombreArchivo();
+        compilado.fuente = lineasDe(fuente);
+        for (const Simbolo& s : tabla.variablesPorDireccion()) {
+            compilado.variables.push_back({s.nombre, nombreTipoDato(s.tipo)});
+        }
+        compilado.programa = codigo;
+        std::string rutaTurc = ruta + "c";
+        if (!escribirArchivo(rutaTurc, escribirTurc(compilado))) {
+            std::cerr << "turlang: no se pudo escribir " << rutaTurc << '\n';
+            return 2;
+        }
+        std::cout << "generado: " << rutaTurc << '\n';
+        return 0;
+    }
+
     Optimizer optimizador;
     Program optimizado = optimizador.optimizar(codigo);
 
@@ -171,23 +248,14 @@ int main(int argc, char* argv[]) {
     if (bandera == "--asm") {
         // <mismo nombre y carpeta que el .tur>.asm, a partir del programa optimizado.
         std::string rutaAsm = ruta.substr(0, ruta.size() - 4) + ".asm";
-        std::ofstream archivoAsm(rutaAsm, std::ios::binary);
-        if (!archivoAsm) {
-            std::cerr << "turlang: no se pudo escribir " << rutaAsm << '\n';
-            return 2;
-        }
+        std::ostringstream textoAsm;
         CodeGenerator generadorAsm(optimizado, tabla, errores.nombreArchivo());
-        generadorAsm.generar(archivoAsm);
-        archivoAsm.close();
-        if (!archivoAsm) {
+        generadorAsm.generar(textoAsm);
+        if (!escribirArchivo(rutaAsm, textoAsm.str())) {
             std::cerr << "turlang: no se pudo escribir " << rutaAsm << '\n';
             return 2;
         }
         std::cout << "generado: " << rutaAsm << '\n';
-        return 0;
-    }
-    if (bandera == "--esp32") {
-        std::cout << bandera << ": pendiente\n";
         return 0;
     }
 
@@ -195,8 +263,7 @@ int main(int argc, char* argv[]) {
     ConsoleIO io;
     Interpreter interprete(optimizado, io);
     if (!interprete.ejecutar()) {
-        std::cout << errores.nombreArchivo() << ':' << interprete.lineaError()
-                  << ": error de ejecución: " << interprete.mensajeError() << '\n';
+        imprimirErrorEjecucion(errores.nombreArchivo(), interprete);
         return 1;
     }
 

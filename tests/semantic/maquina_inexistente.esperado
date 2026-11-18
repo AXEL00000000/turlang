@@ -1,0 +1,5 @@
+maquina_inexistente.tur:10:9: error semántico: máquina duplicada: SumarUno
+maquina_inexistente.tur:18:11: error semántico: argumentos inválidos: Otra no es una máquina
+maquina_inexistente.tur:19:12: error semántico: argumentos inválidos: output espera (string, int)
+maquina_inexistente.tur:20:12: error semántico: argumentos inválidos: repeat espera (string, int)
+4 errores encontrados; no se generó código.

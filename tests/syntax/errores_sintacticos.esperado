@@ -1,0 +1,7 @@
+errores_sintacticos.tur:5:17: error sintáctico: se esperaba un movimiento (R, L o S) y se encontró 'D'
+errores_sintacticos.tur:7:9: error sintáctico: se esperaba un símbolo (letra, dígito, blank o *) y se encontró 'ab'
+errores_sintacticos.tur:12:3: error sintáctico: se esperaba '=' y se encontró '+'
+errores_sintacticos.tur:13:16: error sintáctico: se esperaba '{' y se encontró 'n'
+errores_sintacticos.tur:14:8: error sintáctico: se esperaba ')' y se encontró ';'
+errores_sintacticos.tur:15:5: error sintáctico: se esperaba un identificador y se encontró '='
+6 errores encontrados; no se generó código.

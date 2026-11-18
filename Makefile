@@ -18,12 +18,19 @@ SRCS     = src/main.cpp \
            src/runtime/Valor.cpp \
            src/runtime/TuringSimulator.cpp \
            src/runtime/Interpreter.cpp \
+           src/runtime/Turc.cpp \
            src/backend/CodeGenerator.cpp
 
 ifeq ($(OS),Windows_NT)
   CXXFLAGS += -static
+  POWERSHELL = powershell
+else
+  POWERSHELL = pwsh
 endif
 
-.PHONY: turlang
+.PHONY: turlang test
 turlang:
 	$(CXX) $(CXXFLAGS) $(SRCS) -o turlang
+
+test: turlang
+	$(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/probar.ps1

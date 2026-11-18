@@ -1,0 +1,5 @@
+estado_inexistente.tur:2:11: error semántico: estado inicial no declarado: q9
+estado_inexistente.tur:5:20: error semántico: estado no declarado: q5
+estado_inexistente.tur:8:11: error semántico: estado duplicado: q0
+estado_inexistente.tur:11:11: error semántico: el estado de aceptación no lleva reglas: fin
+4 errores encontrados; no se generó código.

@@ -57,6 +57,23 @@ inline const char* nombreOp(Op op) {
     return "";
 }
 
+// Inversa de nombreOp: regresa false si el texto no es una operación.
+inline bool opDesdeTexto(const std::string& texto, Op& op) {
+    const Op todas[] = {
+        Op::Asignar, Op::Suma, Op::Resta, Op::Mult, Op::Div,
+        Op::Menor, Op::Mayor, Op::MenorIgual, Op::MayorIgual, Op::Igual, Op::Distinto,
+        Op::IfFalse, Op::Jump, Op::Param, Op::Call, Op::Ret,
+        Op::LeerCinta, Op::EscribirCinta, Op::ConvInt, Op::ConvString,
+    };
+    for (Op candidata : todas) {
+        if (texto == nombreOp(candidata)) {
+            op = candidata;
+            return true;
+        }
+    }
+    return false;
+}
+
 // Como se muestra en una tabla.
 inline std::string textoOperando(const Operando& o) {
     switch (o.clase) {

@@ -1,0 +1,4 @@
+no_declarada.tur:2:1: error semántico: variable no declarada: x
+no_declarada.tur:3:7: error semántico: variable no declarada: m
+no_declarada.tur:4:9: error semántico: variable no declarada: y
+3 errores encontrados; no se generó código.

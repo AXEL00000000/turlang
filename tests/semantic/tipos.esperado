@@ -1,0 +1,10 @@
+tipos.tur:1:9: error semántico: tipos incompatibles: se esperaba int y se encontró string
+tipos.tur:3:6: error semántico: tipos incompatibles: se esperaba bool y se encontró int
+tipos.tur:4:5: error semántico: la condición debe ser bool
+tipos.tur:5:15: error semántico: tipos incompatibles: bool + bool
+tipos.tur:6:14: error semántico: tipos incompatibles: string * int
+tipos.tur:7:9: error semántico: conversión inválida: int() espera string
+tipos.tur:8:12: error semántico: conversión inválida: string() espera int o bool
+tipos.tur:9:10: error semántico: tipos incompatibles: se esperaba bool y se encontró string
+tipos.tur:12:13: error semántico: tipos incompatibles: string < int
+9 errores encontrados; no se generó código.

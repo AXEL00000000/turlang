@@ -1,0 +1,134 @@
+=== Antes de optimizar ===
+
+Sección de control
+
+Cuádruplos
+#   Op        Arg1   Arg2  Res
+1   param     "n: "  ---   ---
+2   call      print  1     ---
+3   call      input  0     T1
+4   int       T1     ---   T2
+5   =         T2     ---   n
+6   =         0      ---   i
+7   =         0      ---   j
+8   =         0      ---   total
+9   <         i      n     T3
+10  if-false  T3     ---   (23)
+11  =         0      ---   j
+12  <         j      3     T4
+13  if-false  T4     ---   (20)
+14  *         i      2     T5
+15  +         total  T5    T6
+16  =         T6     ---   total
+17  +         j      1     T7
+18  =         T7     ---   j
+19  jump      ---    ---   (12)
+20  +         i      1     T8
+21  =         T8     ---   i
+22  jump      ---    ---   (9)
+23  param     total  ---   ---
+24  call      print  1     ---
+25  ret       ---    ---   ---
+
+Tripletas
+#   Op        Arg1   Arg2
+1   param     "n: "  ---
+2   call      print  1
+3   call      input  0
+4   int       (3)    ---
+5   =         (4)    n
+6   =         0      i
+7   =         0      j
+8   =         0      total
+9   <         i      n
+10  if-false  (9)    (23)
+11  =         0      j
+12  <         j      3
+13  if-false  (12)   (20)
+14  *         i      2
+15  +         total  (14)
+16  =         (15)   total
+17  +         j      1
+18  =         (17)   j
+19  jump      ---    (12)
+20  +         i      1
+21  =         (20)   i
+22  jump      ---    (9)
+23  param     total  ---
+24  call      print  1
+25  ret       ---    ---
+
+=== Técnicas aplicadas ===
+
+Técnica                                Tipo     Veces
+Folding                                Local    3
+Simplificación algebraica              Local    0
+Reducción de fuerza                    Local    1
+Propagación de constantes              Global   6
+Eliminación de código muerto           Global   6
+Desenrollado de ciclos                 Global   1
+Eliminación de estados inalcanzables   Global   0
+Eliminación de escrituras redundantes  Mirilla  0
+Eliminación de saltos innecesarios     Mirilla  0
+
+=== Después de optimizar ===
+
+Sección de control
+
+Cuádruplos
+#   Op        Arg1   Arg2  Res
+1   param     "n: "  ---   ---
+2   call      print  1     ---
+3   call      input  0     T1
+4   int       T1     ---   T2
+5   =         T2     ---   n
+6   =         0      ---   i
+7   =         0      ---   j
+8   =         0      ---   total
+9   <         i      n     T3
+10  if-false  T3     ---   (24)
+11  +         i      i     T5
+12  +         total  T5    T6
+13  =         T6     ---   total
+14  +         i      i     T5
+15  +         total  T5    T6
+16  =         T6     ---   total
+17  +         i      i     T5
+18  +         total  T5    T6
+19  =         T6     ---   total
+20  =         3      ---   j
+21  +         i      1     T8
+22  =         T8     ---   i
+23  jump      ---    ---   (9)
+24  param     total  ---   ---
+25  call      print  1     ---
+26  ret       ---    ---   ---
+
+Tripletas
+#   Op        Arg1   Arg2
+1   param     "n: "  ---
+2   call      print  1
+3   call      input  0
+4   int       (3)    ---
+5   =         (4)    n
+6   =         0      i
+7   =         0      j
+8   =         0      total
+9   <         i      n
+10  if-false  (9)    (24)
+11  +         i      i
+12  +         total  (11)
+13  =         (12)   total
+14  +         i      i
+15  +         total  (14)
+16  =         (15)   total
+17  +         i      i
+18  +         total  (17)
+19  =         (18)   total
+20  =         3      j
+21  +         i      1
+22  =         (21)   i
+23  jump      ---    (9)
+24  param     total  ---
+25  call      print  1
+26  ret       ---    ---
