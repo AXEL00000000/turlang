@@ -1,5 +1,7 @@
-// prueba_hardware.ino — prueba de pantalla, táctil y SD en el mismo bus SPI
+// prueba_hardware.ino — prueba de pantalla, táctil y SD
 //
+// Los pines están en Hardware.h. La pantalla usa el bus SPI principal; el táctil y
+// la SD lo comparten si tienen sus mismos pines, o usan el segundo bus (HSPI).
 // Menú con tres pruebas: 1. Pantalla, 2. SD, 3. Táctil (calibración y dibujo).
 // Cada resultado se escribe también en el Monitor serie (115200).
 // Los textos de la pantalla van sin acentos: la fuente de Adafruit GFX no los tiene.
@@ -12,8 +14,13 @@
 
 #include "Hardware.h"
 
-Adafruit_ILI9341 tft(PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_RST);
+Adafruit_ILI9341 tft(PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_RST);   // bus SPI principal
 XPT2046_Touchscreen ts(PIN_TOUCH_CS, PIN_TOUCH_IRQ);
+
+// Segundo bus, para el táctil o la SD cuando no comparten los pines de la pantalla.
+SPIClass busHSPI(HSPI);
+SPIClass* busTactil = &SPI;
+SPIClass* busSD = nullptr;   // nullptr: no hay bus libre para los pines de la SD
 
 const int ANCHO = 320;
 const int ALTO = 240;
@@ -408,9 +415,16 @@ void dibujarMenu() {
     boton(BOTON_X, BOTON3_Y, BOTON_W, BOTON_H, "3. Tactil");
 }
 
+// ¿Dos dispositivos usan los mismos SCK, MOSI y MISO?
+bool mismosPines(int sck1, int mosi1, int miso1, int sck2, int mosi2, int miso2) {
+    return sck1 == sck2 && mosi1 == mosi2 && miso1 == miso2;
+}
+
 void setup() {
     // 1. Monitor serie (solo para depurar).
     Serial.begin(115200);
+    Serial.println();
+    Serial.println("Prueba de hardware TurLang");
 
     // 2. Los tres CS en alto antes de iniciar cualquier dispositivo.
     pinMode(PIN_TFT_CS, OUTPUT);
@@ -420,22 +434,51 @@ void setup() {
     digitalWrite(PIN_TOUCH_CS, HIGH);
     digitalWrite(PIN_SD_CS, HIGH);
 
-    // 3. Bus SPI compartido.
-    SPI.begin(PIN_SCK, PIN_MISO, PIN_MOSI);
+    // 3. Buses SPI. La pantalla usa el principal; el táctil lo comparte si tiene sus
+    //    mismos pines o, si no, usa HSPI con los suyos.
+    SPI.begin(PIN_TFT_SCK, PIN_TFT_MISO, PIN_TFT_MOSI);
+    bool hspiOcupado = false;
+    if (mismosPines(PIN_TOUCH_SCK, PIN_TOUCH_MOSI, PIN_TOUCH_MISO,
+                    PIN_TFT_SCK, PIN_TFT_MOSI, PIN_TFT_MISO)) {
+        busTactil = &SPI;
+        Serial.println("Tactil: comparte el bus de la pantalla");
+    } else {
+        busHSPI.begin(PIN_TOUCH_SCK, PIN_TOUCH_MISO, PIN_TOUCH_MOSI);
+        busTactil = &busHSPI;
+        hspiOcupado = true;
+        Serial.println("Tactil: bus propio (HSPI)");
+    }
+
+    // La SD comparte el bus de la pantalla o el del táctil si coincide con sus pines;
+    // si no, usa HSPI cuando está libre. El ESP32 no tiene un tercer bus.
+    if (mismosPines(PIN_SD_SCK, PIN_SD_MOSI, PIN_SD_MISO,
+                    PIN_TFT_SCK, PIN_TFT_MOSI, PIN_TFT_MISO)) {
+        busSD = &SPI;
+        Serial.println("SD: comparte el bus de la pantalla");
+    } else if (hspiOcupado && mismosPines(PIN_SD_SCK, PIN_SD_MOSI, PIN_SD_MISO,
+                                          PIN_TOUCH_SCK, PIN_TOUCH_MOSI, PIN_TOUCH_MISO)) {
+        busSD = &busHSPI;
+        Serial.println("SD: comparte el bus del tactil (HSPI)");
+    } else if (!hspiOcupado) {
+        busHSPI.begin(PIN_SD_SCK, PIN_SD_MISO, PIN_SD_MOSI);
+        busSD = &busHSPI;
+        Serial.println("SD: bus propio (HSPI)");
+    } else {
+        busSD = nullptr;
+        Serial.println("SD: sus pines no coinciden con la pantalla ni con el tactil y no queda "
+                       "un bus SPI libre (ver la tabla de Hardware.h)");
+    }
 
     // 4. Pantalla.
     tft.begin();
     tft.setRotation(ROTACION);
 
     // 5. Táctil.
-    ts.begin();
+    ts.begin(*busTactil);
     ts.setRotation(ROTACION);
 
-    // 6. SD (si falla, la prueba sigue sin SD).
-    sdLista = SD.begin(PIN_SD_CS, SPI, 4000000);
-
-    Serial.println();
-    Serial.println("Prueba de hardware TurLang");
+    // 6. SD: por ahora solo se intenta iniciar; si falla, la prueba sigue sin SD.
+    sdLista = busSD != nullptr && SD.begin(PIN_SD_CS, *busSD, 4000000);
     Serial.println(sdLista ? "SD lista" : "SD no detectada");
 
     dibujarMenu();
