@@ -67,11 +67,11 @@ const int PIN_SD_CS   = 22;
 // Orientación: horizontal, 320 x 240
 const int ROTACION = 1;
 
-// Calibración del táctil (valores crudos); se llenan con la prueba 3
-const int TOUCH_X_MIN = 300;
-const int TOUCH_X_MAX = 3800;
-const int TOUCH_Y_MIN = 300;
-const int TOUCH_Y_MAX = 3800;
-const bool TOUCH_INVERTIR_X = false;
+// Calibración del táctil (valores crudos), medida con la prueba 3 en la NodeMCU ESP32
+const int TOUCH_X_MIN = 406;
+const int TOUCH_X_MAX = 4002;
+const int TOUCH_Y_MIN = 281;
+const int TOUCH_Y_MAX = 3828;
+const bool TOUCH_INVERTIR_X = true;
 const bool TOUCH_INVERTIR_Y = false;
 const bool TOUCH_INTERCAMBIAR_XY = false;
