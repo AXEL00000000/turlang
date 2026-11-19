@@ -7,7 +7,7 @@
 #include <map>
 #include <string>
 
-#include "runtime/Quad.h"
+#include "Quad.h"
 
 // Largo máximo de una cadena y de la cinta.
 const int LIMITE_TEXTO = 2000;

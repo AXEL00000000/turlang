@@ -16,7 +16,13 @@ public:
     // Avisos para la pantalla del prototipo; por omisión no hacen nada
     virtual void lineaActual(int linea) { (void)linea; }
     virtual void variableCambio(const std::string& nombre, const std::string& valor) { (void)nombre; (void)valor; }
-    virtual void maquinaInicio(const std::string& nombre, const std::string& cinta, int cabezal) { (void)nombre; (void)cinta; (void)cabezal; }
+    // limite: el máximo de pasos que recibió la máquina (segundo argumento de run/output)
+    virtual void maquinaInicio(const std::string& nombre, const std::string& cinta, int cabezal, int limite) {
+        (void)nombre; (void)cinta; (void)cabezal; (void)limite;
+    }
     virtual void maquinaPaso(const std::string& cinta, int cabezal, int linea) { (void)cinta; (void)cabezal; (void)linea; }
     virtual void maquinaFin(bool acepto, const std::string& cinta) { (void)acepto; (void)cinta; }
+
+    // Se consulta antes de cada cuádruplo; true: el usuario pidió salir
+    virtual bool detenido() { return false; }
 };

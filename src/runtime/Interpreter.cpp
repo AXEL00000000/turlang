@@ -1,6 +1,6 @@
-#include "runtime/Interpreter.h"
+#include "Interpreter.h"
 
-#include "runtime/TuringSimulator.h"
+#include "TuringSimulator.h"
 
 Interpreter::Interpreter(const Program& programa, IO& io) : programa(programa), io(io) {
     stats.ejecutadosMaquina.assign(programa.maquinas.size(), 0);
@@ -77,6 +77,7 @@ bool Interpreter::ejecutar() {
 
     while (pc < quads.size()) {
         const Quad& q = quads[pc];
+        if (io.detenido()) return fallar(q.linea, "ejecución detenida");
         if (q.linea > 0 && q.linea != lineaAnterior) {
             io.lineaActual(q.linea);
         }

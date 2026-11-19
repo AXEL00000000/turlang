@@ -5,9 +5,9 @@
 #include <string>
 #include <vector>
 
-#include "runtime/IO.h"
-#include "runtime/Program.h"
-#include "runtime/Valor.h"
+#include "IO.h"
+#include "Program.h"
+#include "Valor.h"
 
 struct Estadisticas {
     long ejecutadosPrincipal = 0;          // cuádruplos ejecutados de la sección de control

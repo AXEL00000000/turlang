@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "runtime/Program.h"
+#include "Program.h"
 
 struct VariableInfo {
     std::string nombre;

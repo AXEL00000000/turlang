@@ -1,4 +1,4 @@
-#include "runtime/TuringSimulator.h"
+#include "TuringSimulator.h"
 
 TuringSimulator::TuringSimulator(const Bloque& maquina, IO& io) : maquina(maquina), io(io) {}
 
@@ -55,6 +55,7 @@ bool TuringSimulator::ejecutar(const std::string& cadena, int maximo) {
     size_t pc = 0;
     while (pc < quads.size()) {
         const Quad& q = quads[pc];
+        if (io.detenido()) return fallar(q, "ejecución detenida");
         ++cuenta;
         std::string texto;
 
@@ -69,7 +70,7 @@ bool TuringSimulator::ejecutar(const std::string& cadena, int maximo) {
                     }
                     cinta = v.cadena;
                     desplazamiento = 0;
-                    io.maquinaInicio(maquina.nombre, cinta, 0);
+                    io.maquinaInicio(maquina.nombre, cinta, 0, maximo);
                     ++pc;
                     continue;
                 }

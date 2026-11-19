@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "runtime/Quad.h"
+#include "Quad.h"
 
 // Cada bloque se numera desde 1, tiene sus propios temporales (desde T1) y sus
 // saltos apuntan a renglones del mismo bloque.

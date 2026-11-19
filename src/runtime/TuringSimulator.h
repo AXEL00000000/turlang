@@ -4,9 +4,9 @@
 
 #include <string>
 
-#include "runtime/IO.h"
-#include "runtime/Program.h"
-#include "runtime/Valor.h"
+#include "IO.h"
+#include "Program.h"
+#include "Valor.h"
 
 class TuringSimulator {
 public:
