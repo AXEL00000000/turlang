@@ -285,6 +285,5 @@ scripts/            ensamblar.bat (NASM + gcc de 32 bits), probar.ps1 (pruebas),
 dist/               turlang-windows.zip, generado con mingw32-make paquete (no se sube)
 tests/              pruebas automáticas por fase
 examples/           programas .tur de ejemplo
-docs/               hojas de instrucciones por etapa
 esp32/              firmware del prototipo (pendiente)
 ```
