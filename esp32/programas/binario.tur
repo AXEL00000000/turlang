@@ -1,0 +1,19 @@
+machine Incrementar {
+    start derecha
+    accept fin
+    state derecha {
+        0 -> 0, R, derecha
+        1 -> 1, R, derecha
+        blank -> blank, L, suma
+    }
+    state suma {
+        1 -> 0, L, suma
+        0 -> 1, S, fin
+        blank -> 1, S, fin
+    }
+}
+
+print(output Incrementar("1011", 100));
+print(output Incrementar("111", 100));
+print(output Incrementar("0", 100));
+print(run Incrementar("12", 100));

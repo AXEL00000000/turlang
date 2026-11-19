@@ -1,0 +1,15 @@
+machine SumarUno {
+    start q0
+    accept fin
+    state q0 {
+        1 -> 1, R, q0
+        blank -> 1, S, fin
+    }
+}
+
+print(run SumarUno("11", 100));
+print(output SumarUno("11", 100));
+print(output SumarUno("", 100));
+print(output SumarUno(repeat("1", 5), 100));
+print(run SumarUno("111", 2));
+print(run SumarUno("1a1", 100));

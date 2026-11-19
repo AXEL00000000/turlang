@@ -28,7 +28,7 @@ else
   POWERSHELL = pwsh
 endif
 
-.PHONY: turlang test paquete
+.PHONY: turlang test paquete esp32
 turlang:
 	$(CXX) $(CXXFLAGS) $(SRCS) -o turlang
 
@@ -37,3 +37,6 @@ test: turlang
 
 paquete: turlang
 	$(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/paquete.ps1
+
+esp32: turlang
+	$(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File scripts/sincronizar_esp32.ps1

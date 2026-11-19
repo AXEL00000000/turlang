@@ -1,0 +1,31 @@
+machine CerosUnos {
+    start q0
+    accept fin
+    state q0 {
+        0 -> X, R, q1
+        Y -> Y, R, q3
+    }
+    state q1 {
+        0 -> 0, R, q1
+        Y -> Y, R, q1
+        1 -> Y, L, q2
+    }
+    state q2 {
+        X -> X, R, q0
+        * -> *, L, q2
+    }
+    state q3 {
+        Y -> Y, R, q3
+        blank -> blank, S, fin
+    }
+}
+
+print(run CerosUnos("01", 100));
+print(run CerosUnos("0011", 100));
+print(run CerosUnos("000111", 100));
+print(run CerosUnos("001", 100));
+print(run CerosUnos("011", 100));
+print(run CerosUnos("10", 100));
+print(run CerosUnos("", 100));
+print(run CerosUnos("000111", 20));
+print(output CerosUnos("0011", 100));
