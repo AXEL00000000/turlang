@@ -76,7 +76,7 @@ doble clic en `desinstalar.bat`: borra la carpeta y la quita del PATH del usuari
 | Compilar el traductor | g++ con C++17 y make. En Windows, MinGW (por ejemplo WinLibs) con `mingw32-make`. |
 | Ensamblar el `.asm` | SASM (https://dman95.github.io/SASM/), que trae NASM y un gcc de 32 bits. |
 | Correr las pruebas | PowerShell (incluido en Windows; `pwsh` en Linux o macOS). |
-| Cargar el prototipo | Arduino IDE 2 (firmware del ESP32, pendiente). |
+| Cargar el prototipo | Arduino IDE 2 con el núcleo esp32 y las bibliotecas Adafruit ILI9341, Adafruit GFX y XPT2046_Touchscreen. |
 
 ## 4. Compilar el traductor
 
@@ -239,13 +239,33 @@ biblioteca de C, de modo que también se puede ensamblar en Linux con `nasm -f e
 
 ## 9. Llevar un programa al prototipo
 
-1. Genera el compilado: `turlang programa.tur --esp32` (crea `programa.turc` en la
-   misma carpeta; lleva el código fuente, las variables y los cuádruplos sin
-   optimizar).
-2. Puedes probarlo en la computadora antes: `turlang programa.turc`.
-3. Copia el `.turc` a la tarjeta SD (formato FAT32).
-4. Inserta la SD en el prototipo y elige el programa en el menú. *Pendiente: depende
-   del firmware del ESP32.*
+El prototipo es una NodeMCU ESP32 con pantalla táctil ILI9341 de 320 × 240. Su
+firmware está en `esp32/turlang_esp32/`. Al encender muestra un menú con los
+programas; al elegir uno lo ejecuta con la flecha en la línea actual, las variables,
+la consola, la cinta de cada máquina y un teclado en pantalla para `input()`. La barra
+superior tiene **Pausa**, **Vel** (Lento, Normal, Rápido) y **Salir**; al terminar,
+**Repetir** o **Menu**. El Monitor serie (115200) recibe lo mismo que la consola.
+
+Los programas van incrustados en el firmware. Para agregar uno:
+
+1. Pon el `.tur` en `esp32/programas/`.
+2. Corre `mingw32-make esp32` (`make esp32` en Linux o macOS). Compila el traductor,
+   copia `src/runtime/` a `esp32/turlang_esp32/src/runtime/`, compila cada programa
+   de `esp32/programas/` con `--esp32` y genera `esp32/turlang_esp32/Programas.h`
+   con todos los `.turc`. Si un programa tiene errores, se detiene y los muestra.
+3. Abre `esp32/turlang_esp32/turlang_esp32.ino` en Arduino IDE 2, elige la placa
+   **ESP32 Dev Module** y su puerto, y súbelo (si se queda en `Connecting...`,
+   mantén presionado el botón BOOT).
+
+`Programas.h` y `src/runtime/` del sketch se suben al repositorio, así que Arduino
+IDE compila el firmware sin correr el script. Los pines y la calibración del táctil
+están en `esp32/turlang_esp32/Hardware.h`; `esp32/prueba_hardware/` es la prueba de
+pantalla, táctil y SD.
+
+Con `turlang programa.tur --esp32` también se genera el `.turc` suelto, que se puede
+probar en la computadora con `turlang programa.turc`. *Pendiente: leer los `.turc`
+desde una tarjeta SD.* La ranura SD todavía no se usa; el menú lo indica con
+`SD: pendiente`.
 
 ## 10. Pruebas
 
@@ -281,9 +301,12 @@ src/ir/             código intermedio, tripletas, optimizador, costos e impresi
 src/backend/        generador de ensamblador x86
 src/runtime/        cuádruplos, intérprete, simulador de máquinas y .turc (también para el ESP32)
 scripts/            ensamblar.bat (NASM + gcc de 32 bits), probar.ps1 (pruebas),
-                    instalar y desinstalar (.bat y .ps1) y paquete.ps1 (arma el zip)
+                    instalar y desinstalar (.bat y .ps1), paquete.ps1 (arma el zip) y
+                    sincronizar_esp32.ps1 (prepara el firmware)
 dist/               turlang-windows.zip, generado con mingw32-make paquete (no se sube)
 tests/              pruebas automáticas por fase
 examples/           programas .tur de ejemplo
-esp32/              firmware del prototipo (pendiente)
+esp32/turlang_esp32/  firmware del prototipo (sketch de Arduino)
+esp32/programas/    programas .tur que se incrustan en el firmware
+esp32/prueba_hardware/  prueba de pantalla, táctil y SD
 ```
